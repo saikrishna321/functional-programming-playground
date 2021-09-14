@@ -1,4 +1,5 @@
 import { ifElse, propEq } from 'ramda';
+import { request } from '../api/Api.js';
 
 const returnErrorDataObject = (message) => (data) => ({
   error: data.error,
@@ -16,8 +17,14 @@ const returnDataObject = async (data) => ({
 
 const hasError = propEq('error', true);
 
-export const evaluateApiResponses = ifElse(
+const evaluateApiResponses = ifElse(
   hasError,
   returnErrorDataObject('API Failed'),
   returnDataObject
 );
+
+export const requestAndEvaluate = ({ url, requestOptions }) =>
+  request({
+    url,
+    requestOptions,
+  }).then(evaluateApiResponses);

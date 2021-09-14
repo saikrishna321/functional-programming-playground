@@ -1,15 +1,9 @@
-import { request } from '../api/Api.js';
-import { evaluateApiResponses } from '../utils/evaluateResponse.js';
+import { requestAndEvaluate } from '../utils/evaluateResponse.js';
 import { expect } from 'chai';
-import { is } from 'ramda';
+import { always, equals, is } from 'ramda';
+import { find, getRandomStoreId, updateStore } from '../domain/store.js';
 
 describe('Hello Stores', () => {
-  const requestAndEvaluate = ({ url, requestOptions }) =>
-    request({
-      url,
-      requestOptions,
-    }).then(evaluateApiResponses);
-
   it('Response should return 404', async () => {
     const { status } = await requestAndEvaluate({
       url: '/stores/4yyy',
@@ -48,5 +42,14 @@ describe('Hello Stores', () => {
     });
     expect(status).to.be.equal(201);
     expect(is(Number, response.id)).to.be.true;
+  });
+
+  it('Update the Store city', async () => {
+    const store = await find(getRandomStoreId)().then((store) =>
+      updateStore(store).then(always(store))
+    );
+
+    const updatedStore = await find()(store);
+    expect(equals(store.city, updatedStore.city)).to.be.equal(false);
   });
 });
