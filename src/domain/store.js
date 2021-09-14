@@ -2,25 +2,23 @@ import { requestAndEvaluate } from '../utils/evaluateResponse.js';
 import { findLast, pipe, prop } from 'ramda';
 import faker from 'faker';
 
-export const find = (randomStore) => async (storeId) => {
+export const findStoreWith = (randomStore) => async (response) => {
   const { id } =
-    typeof randomStore === 'function' ? await randomStore() : storeId;
-  return (
-    await requestAndEvaluate({
-      url: `/stores/${id}`,
-      requestOptions: {
-        method: 'GET',
-      },
-    })
-  ).response;
+    typeof randomStore === 'function' ? await randomStore() : response;
+  return await requestAndEvaluate({
+    url: `/stores/${id}`,
+    requestOptions: {
+      method: 'GET',
+    },
+  });
 };
 
-export const updateStore = async ({ id }) => {
+export const updateStore = async ({ response }) => {
   const body = JSON.stringify({
     city: `${faker.address.city()}`,
   });
   return await requestAndEvaluate({
-    url: `/stores/${id}`,
+    url: `/stores/${response.id}`,
     requestOptions: {
       method: 'PATCH',
       body,
@@ -29,7 +27,7 @@ export const updateStore = async ({ id }) => {
   });
 };
 
-export const getRandomStoreId = async () => {
+export const randomId = async () => {
   const { response } = await requestAndEvaluate({
     url: '/stores',
     requestOptions: {
@@ -37,4 +35,24 @@ export const getRandomStoreId = async () => {
     },
   });
   return pipe(prop('data'), findLast(prop('id')))(response);
+};
+
+export const addStore = async () => {
+  let address = faker.address;
+  let name = faker.name;
+  let body = JSON.stringify({
+    name: name.firstName(),
+    type: name.jobType(),
+    address: address.streetName(),
+    city: address.city(),
+    state: address.state(),
+    zip: address.zipCode(),
+  });
+  return await requestAndEvaluate({
+    url: '/stores',
+    requestOptions: {
+      body,
+      method: 'POST',
+    },
+  });
 };
