@@ -1,4 +1,3 @@
-import { requestAndEvaluate } from '../utils/evaluateResponse.js';
 import { expect } from 'chai';
 import { always, equals, is } from 'ramda';
 import {
