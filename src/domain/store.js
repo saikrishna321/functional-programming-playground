@@ -1,17 +1,17 @@
 import { requestAndEvaluate } from '../utils/evaluateResponse.js';
-import { findLast, pipe, prop } from 'ramda';
+import { curry, findLast, pipe, prop } from 'ramda';
 import faker from 'faker';
 
-export const findStoreWith = (randomStore) => async (response) => {
+export const findStoreWith = curry(async (randomStore) => {
   const { id } =
-    typeof randomStore === 'function' ? await randomStore() : response;
+    typeof randomStore === 'function' ? await randomStore() : randomStore;
   return await requestAndEvaluate({
     url: `/stores/${id}`,
     requestOptions: {
       method: 'GET',
     },
   });
-};
+});
 
 export const updateStore = async ({ response }) => {
   const body = JSON.stringify({

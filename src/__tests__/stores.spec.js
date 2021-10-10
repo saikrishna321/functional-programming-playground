@@ -9,12 +9,12 @@ import {
 
 describe('Hello Stores', () => {
   it('Response should return 404', async () => {
-    const { status } = await findStoreWith()({ id: '00000' });
+    const { status } = await findStoreWith({ id: '00000' });
     expect(status).to.be.equal(404);
   });
 
   it('Response should return 200 for valid request', async () => {
-    const { status } = await findStoreWith(randomId)();
+    const { status } = await findStoreWith(randomId);
     expect(status).to.be.equal(200);
   });
 
@@ -28,11 +28,11 @@ describe('Hello Stores', () => {
   });
 
   it('Update the Store city', async () => {
-    const store = await findStoreWith(randomId)().then((store) =>
+    const store = await findStoreWith(randomId).then((store) =>
       updateStore(store).then(always(store.response))
     );
 
-    const updatedStore = await findStoreWith()(store);
+    const updatedStore = await findStoreWith(store);
     expect(equals(store.city, updatedStore.city)).to.be.equal(false);
   });
 });
